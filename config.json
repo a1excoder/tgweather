@@ -1,0 +1,4 @@
+{
+    "telegram_bot_token": "<SECRET_KEY>",
+    "owm_token": "<SECRET_KEY>"
+}
