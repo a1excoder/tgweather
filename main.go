@@ -31,7 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	bot.Debug = true
+	bot.Debug = false
 
 	u := botLib.NewUpdate(0)
 	u.Timeout = 60
@@ -85,7 +85,7 @@ func main() {
 
 			msg, err := GetWeather(message.Message.CommandArguments(), data.OwmToken, lang)
 			if err != nil {
-				SendMessage(message, bot, "city not found") // server error, repeat after 10m
+				SendMessage(message, bot, "server error, repeat after 10m")
 				log.Println(err)
 				continue
 			}

@@ -22,14 +22,12 @@ func GetConfigFileData(fileName string) (*ConfigFile, error) {
 		return nil, err
 	}
 
-	err = confFile.Close()
-	if err != nil {
+	if err = confFile.Close(); err != nil {
 		return nil, err
 	}
 
 	_data := ConfigFile{}
-	err = json.Unmarshal(confBuff[:n], &_data)
-	if err != nil {
+	if err = json.Unmarshal(confBuff[:n], &_data); err != nil {
 		return nil, err
 	}
 

@@ -35,8 +35,8 @@ type sys struct {
 	Country string
 }
 
-func GetWeatherData(cityName, ownToken string) (*WeatherData, error) {
-	request := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?units=metric&lang=en&q=%s&APPID=%s", cityName, ownToken)
+func GetWeatherData(cityName, ownToken, lang string) (*WeatherData, error) {
+	request := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?units=metric&lang=%s&q=%s&APPID=%s", lang, cityName, ownToken)
 	_data := WeatherData{}
 
 	resp, err := http.Get(request)
@@ -48,17 +48,21 @@ func GetWeatherData(cityName, ownToken string) (*WeatherData, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	err = json.Unmarshal(buffer, &_data)
 	if err != nil {
 		return nil, err
+	}
+
+	if _data.Cod != 200 {
+		return nil, fmt.Errorf("owm status code != 200")
 	}
 
 	return &_data, nil
 }
 
 func GetWeather(cityName, ownToken, lang string) (string, error) {
-	data, err := GetWeatherData(cityName, ownToken)
+	data, err := GetWeatherData(cityName, ownToken, getCorrectLang(lang))
 	if err != nil {
 		return "", err
 	}
@@ -72,5 +76,18 @@ func GetWeather(cityName, ownToken, lang string) (string, error) {
 	} else {
 		return fmt.Sprintf("name: %s\ncountry: %s\ntemp: %.3f\ndescription: %s\nmin temp: %.3f\nmax temp %.3f\nwind speed: %.3f",
 			data.Name, data.Sys.Country, data.Main.Temp, data.Weather[0].Description, data.Main.TempMin, data.Main.TempMax, data.Wind.Speed), nil
+	}
+}
+
+func getCorrectLang(lang string) string {
+	switch lang {
+	case FlagUa:
+		return "ua"
+	case FlagRu:
+		return "ru"
+	case FlagGb:
+		return "en"
+	default:
+		return "en"
 	}
 }
